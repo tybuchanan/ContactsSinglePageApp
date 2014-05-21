@@ -1,8 +1,21 @@
-// Waiting for the DOM to finish loading
 $(document).ready(function() {
 
     var contacts = [];
-    var count = 0;
+    var count = 500;
+    // Letters A-Z
+    for (var char_code = 65; char_code < 91; char_code++) {
+        var charStr = String.fromCharCode(char_code);
+        var charSpan = "<span id='" + charStr + "' class='letter'> " + charStr + " </span>";
+        $("#letters").append(charSpan);
+    };
+
+    $("#letters").on("click", ".letter", function() {
+        var id = this.id;
+        console.log(id)
+        $(".contact").hide();
+        $("." + id).show();
+    });
+
 
     var deleteContact = function(event) {
         console.log("Delete", this);
@@ -12,7 +25,8 @@ $(document).ready(function() {
     $("#contacts").on("click", ".delete", deleteContact);
 
     var addContact = function(newContact) {
-        var contactString = ["<div id='", newContact.id, "' class='contact'>",
+        //prints one contact at a time
+        var contactString = ["<div id='", newContact.id, "' class='contact " + newContact.name[0].toUpperCase() + "'>",
             "<div>",
             "<img src='", newContact.imgUrl, "' class='contact-img'>",
             "</div>",
@@ -51,6 +65,7 @@ $(document).ready(function() {
         // Reset the form
         this.reset();
 
+
         // Keeping track of new contacts
         var newContact = {
             id: count,
@@ -70,9 +85,11 @@ $(document).ready(function() {
     });
 
     $.get('/contacts.json').done(function(data) {
+        //stored the contact in the area
         contacts = data
         $.each(contacts, function(index, item) {
             addContact(item);
+
         });
     });
 });
